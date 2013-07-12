@@ -1,7 +1,7 @@
 {
     "name": "crypto-browserify",
     "version": "0.0.1",
-    "description": "Alternate crypto-browserify based on crytico and contributors",
+    "description": "Alternate crypto-browserify based on crytico, cryto-js and contributors",
     "devDependencies":{
         "mocha": "1.9",
         "chai": "1.6"

@@ -1,0 +1,5 @@
+The SRC folder contains original code and repository links to other projects.
+
+They are included for the purpose of documenting the port, as a reference.
+
+The actual code in use is located under /lib.
