@@ -2,6 +2,10 @@
 
 MOCHA_REPORTER=list
 
+# Directory and Source Path definitions
+
+CMD_DIR =  ./node_modules/.bin
+
 test: servertest
 
 servertest:
