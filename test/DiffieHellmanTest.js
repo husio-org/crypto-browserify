@@ -17,62 +17,59 @@ var DiffieHelman=require('../lib/rv/DiffieHellman'),
 
 describe("Will test DiffieHellman",function(){
 
-    // this is a development test
-    // requires to set a fixed key in the implementation. disabled.
-    xit("will test DH ", function(){
-        var dh= new DiffieHelman(new BigInteger("2"),new BigInteger("997"),8),
-            mv=dh.computeMasterValue(new BigInteger("216"));
+    xdescribe("Development tests, require custom hardcoded keys", function(){
+        // this is a development test
+        // requires to set a fixed key in the implementation. disabled.
+        it("will test DH ", function(){
+            var dh= new DiffieHelman(new BigInteger("2"),new BigInteger("997"),8),
+                mv=dh.computeMasterValue(new BigInteger("216"));
             console.log('DH Public Value:'+dh.getPublicValue().toString());
             console.log('DH Master Value:'+mv.toString());
+        });
+
+        it("will test DH group 14 ", function(){
+            var dh= new DiffieHelman("MODP",14),
+                mv=dh.computeMasterValue(new BigInteger("216"));
+
+            console.log('DH Public Value:'+dh.getPublicValue().toString());
+            console.log('DH Master Value:'+mv.toString());
+
+        });
+    })
+
+    describe("Interop tests", function(){
+        /**
+         * Both implementation will use modp14 to generate each own public key,
+         * after the interchange the, they should arrive to the same secret.
+         * TODO:Random failures
+         * possible related issue: sometimes returns MSB00s
+         */
+        it("will negotiate a DH modp14 session key between crypto and crypto-browserify",function(){
+            var dh=crypto.getDiffieHellman('modp14'),
+                dhb=cryptob.getDiffieHellman('modp14'),
+                pk=dh.generateKeys(),
+                pkb=dhb.generateKeys();
+
+
+            expect(dh.getPrime("hex")).equal(dhb.getPrime("hex"));
+            expect(dh.getGenerator("hex")).equal(dhb.getGenerator("hex"));
+            expect(dh.computeSecret(pkb).toString('hex')).equals(dhb.computeSecret(pk).toString('hex'));
+        });
+
+        /**
+         * Both implementation will use modp2 to generate each own public key,
+         * after the interchange the, they should arrive to the same secret.
+         * TODO:Fix required: complains about key length
+         */
+        it("will negotiate a DH modp2 session key between crypto and crypto-browserify",function(){
+            var dh=crypto.getDiffieHellman('modp2'),
+                dhb=cryptob.getDiffieHellman('modp2'),
+                pk=dh.generateKeys(),
+                pkb=dhb.generateKeys();
+
+            expect(dh.getGenerator("hex")).equal(dhb.getGenerator("hex"));
+            expect(dh.getPrime("hex")).equal(dhb.getPrime("hex"));
+            expect(dh.computeSecret(pkb).toString('hex')).equals(dhb.computeSecret(pk).toString('hex'));
+        });
     });
-
-    xit("will test DH group 14 ", function(){
-        var dh= new DiffieHelman("MODP",14),
-            mv=dh.computeMasterValue(new BigInteger("216"));
-
-        console.log('DH Public Value:'+dh.getPublicValue().toString());
-        console.log('DH Master Value:'+mv.toString());
-
-    });
-
-    /**
-     * Both implementation will use modp14 to generate each own public key,
-     * after the interchange the, they should arrive to the same secret.
-     * TODO:Random failures
-     * possible related issue: sometimes returns MSB00s
-     */
-    it("will negotiate a DH modp14 session key between crypto and crypto-browserify",function(){
-        var dh=crypto.getDiffieHellman('modp14'),
-            dhb=cryptob.getDiffieHellman('modp14'),
-            pk=dh.generateKeys(),
-            pkb=dhb.generateKeys();
-
-        //console.log("");
-        //console.log("KEYA:"+dh.computeSecret(pkb).toString('hex'));
-        //console.log("KEYB:"+dhb.computeSecret(pk).toString('hex'));
-        expect(dh.computeSecret(pkb).toString('hex')).equals(dhb.computeSecret(pk).toString('hex'));
-    });
-
-    /**
-     * Both implementation will use modp2 to generate each own public key,
-     * after the interchange the, they should arrive to the same secret.
-     * TODO:Fix required: complains about key length
-     */
-    xit("will negotiate a DH modp2 session key between crypto and crypto-browserify",function(){
-        var dh=crypto.getDiffieHellman('modp2'),
-            dhb=cryptob.getDiffieHellman('modp2'),
-            pk=dh.generateKeys(),
-            pkb=dhb.generateKeys();
-
-        console.log("");
-        console.log("PUBA:"+pk.toString('hex'));
-        console.log("PUBB:"+dhb.toString('hex'));
-
-        console.log("KEYA:"+dh.computeSecret(pkb).toString('hex'));
-        console.log("KEYB:"+dhb.computeSecret(pk).toString('hex'));
-        expect(dh.computeSecret(pkb).toString('hex')).equals(dhb.computeSecret(pk).toString('hex'));
-    });
-
-
-
-})
+});
