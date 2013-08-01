@@ -10,9 +10,9 @@
  * Time: 3:49 PM
  */
 
-var SHA256=require("../lib/webkit/SHA256"),
-    SHA1=require("../lib/webkit/SHA1"),
-    MD5=require("../lib/webkit/MD5"),
+var SHA256=require("../lib/cryptico/webkit/SHA256"),
+    SHA1=require("../lib/cryptico/webkit/SHA1"),
+    MD5=require("../lib/cryptico/webkit/MD5"),
     expect=require("chai").expect;
 
 
