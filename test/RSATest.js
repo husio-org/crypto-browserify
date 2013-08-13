@@ -109,7 +109,7 @@ describe("Will test crypto RSA ",function(){
 
 
         signer.update(msg);
-        s=signer.sign(rsaKey);
+        s=signer.sign(private);
 
         verifier.update(msg);
         v=verifier.verify(public,s);

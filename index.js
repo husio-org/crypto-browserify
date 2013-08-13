@@ -291,8 +291,13 @@ function RSASigner(){
         else message=data;
     }
 
-    this.sign=function(keyFile){
-        var rsa=new RSA(), s;
+    this.sign=function(key){
+        var rsa=new RSA(), s, keyFile;
+
+        if(Buffer.isBuffer(key)) key=key.toString("utf8");
+
+        keyFile=SSHKeyParser.parse(key);
+
         rsa.setPrivate(keyFile.getModulus(),keyFile.getExponent(),keyFile.getPrivateExponent());
         s=rsa.signStringWithSHA1(message.toString("binary"));
         if(s.length%2) s="0"+s; // align if necessary
