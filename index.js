@@ -3,6 +3,7 @@ exports.DEFAULT_ENCODING = 'buffer';
 var SecureRandom=require('./lib/Random').SecureRandom,
     secureRandom=new SecureRandom(),
     DiffieHellman=require("./lib/rv/DiffieHellman"),
+    SSHKeyParser=require("cryptokey/lib/parser/KeyParser"),
     MODE_ENCRYPTOR= 1,
     MODE_DECRYPTOR=0;
 
@@ -219,6 +220,100 @@ exports.createHmac=function(alg,keyBuffer){
 
 
 /**
+ * Verifier implementation.
+ *
+ * TODO: streaming support
+ * TODO: support standard (node) KEY
+ * TODO: SHA-256?
+ *
+ * @type {Array}
+ */
+
+function RSAVerifier(){
+    var RSA=require("./lib/cryptico/RSA"),message;
+
+    this.update=function(chunk,iencoding){
+        var e, r,data;
+        // apply encoding if provided
+        data=normalizeData(chunk,iencoding);
+        if(message) throw new Error("crypto-browserify: streaming not supported, can only call update once");
+        else message=data;
+    }
+
+    /**
+     *
+     * @param key  buffer, or base64string for raw keys
+     * @param sig
+     * @param sfmt
+     * @returns {*}
+     */
+    this.verify=function(key, sig, sfmt){
+        var signature=normalizeData(sig,sfmt),
+            rsa=new RSA(),
+            keyFile;
+
+
+        if(Buffer.isBuffer(key)) key=key.toString("utf8");
+
+        keyFile=SSHKeyParser.parse(key);
+
+
+        rsa.setPublic(keyFile.getModulus(),keyFile.getExponent());
+        return rsa.verifyHexSignatureForMessage(signature.toString("hex"),message.toString("binary"));
+    }
+}
+
+exports.createVerify=function(alg){
+    switch(alg.toUpperCase()){
+        case ('RSA-SHA1'):
+        case ('RSA-SHA256'):
+            return new RSAVerifier();
+            break;
+        default:
+            throw Error("crypto-browserify: Verify: "+alg+" not implemented");
+    }
+}
+
+
+/**
+ * Signer implementation
+ * @type {Array}
+ */
+
+function RSASigner(){
+    var RSA=require("./lib/cryptico/RSA"),message;
+
+    this.update=function(chunk,iencoding){
+        var e, r,data;
+        // apply encoding if provided
+        data=normalizeData(chunk,iencoding);
+        if(message) throw new Error("crypto-browserify: streaming not supported, can only call update once");
+        else message=data;
+    }
+
+    this.sign=function(keyFile){
+        var rsa=new RSA(), s;
+        rsa.setPrivate(keyFile.getModulus(),keyFile.getExponent(),keyFile.getPrivateExponent());
+        s=rsa.signStringWithSHA1(message.toString("binary"));
+        if(s.length%2) s="0"+s; // align if necessary
+        return new Buffer(s,"hex");
+    }
+
+}
+
+exports.createSign=function(alg){
+    switch(alg.toUpperCase()){
+        case ('RSA-SHA1'):
+        case ('RSA-SHA256'):
+            return new RSASigner();
+            break;
+        default:
+            throw Error("crypto-browserify: Sign: "+alg+" not implemented");
+    }
+}
+
+
+/**
  * By default, there is no inmplementation of the following:
  */
 var unimplemented=[
@@ -229,9 +324,7 @@ var unimplemented=[
     'Cipher',
     'createDecipher',
     'Decipher',
-    'createSign',
     'Sign',
-    'createVerify',
     'Verify',
     'createDeffieHellman',
     'DiffieHellman',

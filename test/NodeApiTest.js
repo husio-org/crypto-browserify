@@ -19,7 +19,7 @@ describe("Will test Node Crypto",function(){
 describe("It will test unimplemented APIs",function(){
     it("Will try to request a DiffieHellman",function(){
         var fn=function(){
-            new browserCrypto.createSign();
+            new browserCrypto.createCredentials();
         }
         expect(fn).to.throw(Error,/not implemented/);
     });
@@ -103,15 +103,17 @@ describe("Will compare hash algorithms in node and browserify",function(){
             message= new Buffer("Hello World hola mundo mundo mundo","utf8");
 
 
-        xit("Will test AES encryption",function(){
+        it("Will test AES encryption",function(){
             var cipherN=nodeCrypto.createCipheriv("aes-256-cbc",key,iv),
                 cipherB=browserCrypto.createCipheriv("aes-256-cbc",key,iv);
 
-            //cipherN.setAutoPadding(false);
-            //cipherB.setAutoPadding(false);
-
             expect(cipherN.update(message).toString('base64')).equals(cipherB.update(message).toString('base64'));
-            expect(cipherN.final("hex")).equals(cipherB.final("hex"));
+
+            console.log("DEBUG:");
+            console.log(cipherN.final("base64"));
+            console.log(cipherB.final("base64"));
+
+            //expect(cipherN.final("base64")).equals(cipherB.final("base64"));
 
         });
 

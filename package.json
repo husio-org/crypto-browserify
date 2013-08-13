@@ -2,6 +2,9 @@
     "name": "crypto-browserify",
     "version": "0.0.1",
     "description": "Alternate crypto-browserify based on crytico, cryto-js and contributors",
+    "dependencies": {
+        "cryptokey": "git+http://rafael@husio.local/git/cryptokey.git"
+    },
     "devDependencies":{
         "mocha": "1.9",
         "chai": "1.6"
