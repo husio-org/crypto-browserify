@@ -23,16 +23,11 @@ describe("Will test DiffieHellman",function(){
         it("will test DH ", function(){
             var dh= new DiffieHelman(new BigInteger("2"),new BigInteger("997"),8),
                 mv=dh.computeMasterValue(new BigInteger("216"));
-            console.log('DH Public Value:'+dh.getPublicValue().toString());
-            console.log('DH Master Value:'+mv.toString());
         });
 
         it("will test DH group 14 ", function(){
             var dh= new DiffieHelman("MODP",14),
                 mv=dh.computeMasterValue(new BigInteger("216"));
-
-            console.log('DH Public Value:'+dh.getPublicValue().toString());
-            console.log('DH Master Value:'+mv.toString());
 
         });
     })

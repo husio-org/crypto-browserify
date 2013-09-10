@@ -12,7 +12,7 @@ var nodeCrypto=require('crypto'),
 
 describe("Will test Node Crypto",function(){
     it("will require the list of hashes",function(){
-        console.log('HASHES:'+nodeCrypto.getHashes());
+        expect(nodeCrypto.getHashes()).to.be.array;;
     });
 });
 
@@ -108,10 +108,6 @@ describe("Will compare hash algorithms in node and browserify",function(){
                 cipherB=browserCrypto.createCipheriv("aes-256-cbc",key,iv);
 
             expect(cipherN.update(message).toString('base64')).equals(cipherB.update(message).toString('base64'));
-
-            console.log("DEBUG:");
-            console.log(cipherN.final("base64"));
-            console.log(cipherB.final("base64"));
 
             //expect(cipherN.final("base64")).equals(cipherB.final("base64"));
 
