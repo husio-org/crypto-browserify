@@ -3,7 +3,7 @@ exports.DEFAULT_ENCODING = 'buffer';
 var SecureRandom=require('./lib/Random').SecureRandom,
     secureRandom=new SecureRandom(),
     DiffieHellman=require("./lib/rv/DiffieHellman"),
-    SSHKeyParser=require("cryptokey/lib/parser/KeyParser"),
+    SSHKeyParser=require("cryptokey/lib/parser/KeyParser_gx"),
     MODE_ENCRYPTOR= 1,
     MODE_DECRYPTOR=0;
 
